@@ -1,8 +1,21 @@
-var express = require('express')
-  , http = require('http')
-  , path = require('path') 
-  , app = module.exports = express()
-  , mongoose = require('mongoose');
+var express = require('express');
+var http = require('http');
+var path = require('path');
+var app = module.exports = express();
+var mongoose = require('mongoose');
+var MongoStore = require('connect-mongostore')(express);
+
+
+//Routes
+var docRoute = require('./routes/document');
+var userRoute = require('./routes/user');
+var sessionRoute = require('./routes/session');
+
+//Middlewares
+var loadUser = require('./middleware/user').loadUser;
+
+//Connect to database
+var db = mongoose.connect('mongodb://localhost/nodepad-development');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -11,6 +24,13 @@ app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
+app.use(express.cookieParser());
+app.use(express.session({
+    key: 'nodepad',
+    secret: 'my secret',
+    cookie: {expires: false},
+    store: new MongoStore({db: 'nodepad-development'})
+  }));
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
@@ -20,104 +40,48 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-//Connect to databse
-mongoose.connect('mongodb://localhost/nodepad-development');
-
-//Models 
-var Document = require('./models').Document();
-
-app.get('/', function(req, res) {
+app.get('/', loadUser, function (req, res) {
   res.redirect('/documents');
 });
 
-// Document list
-app.get('/documents.:format?', function(req, res) {
-  Document.find(function(err, documents) {
-    switch (req.params.format) {
-      case 'json':
-        res.send(documents.map(function(d) {
-          return d;
-        }));
-        break;
+// DOCUMENTS //
+// List Documents
+app.get('/documents.:format?', loadUser, docRoute.listDoc);
 
-      default:
-        res.render('documents/index.jade', { documents: documents });
-    }
-  });
-});
+// Edit Document
+app.get('/documents/:id.:format?/edit', loadUser, docRoute.editDoc);
 
-app.get('/documents/:id.:format?/edit', function(req, res) {
-  Document.findById(req.params.id, function(err, d) {
-    res.render('documents/edit.jade', { d: d });
-  });
-});
-
-app.get('/documents/new', function(req, res) {
-  res.render('documents/new.jade', { d: new Document() });
-});
+// New Document
+app.get('/documents/new', loadUser, docRoute.newDoc);
 
 // Create document 
-app.post('/documents.:format?', function(req, res) {
-  var d = new Document(req.body.document);
-  d.save(function() {
-    switch (req.query.format) {
-      case 'json':
-        res.send(d);
-       break;
-
-       default:
-        res.redirect('/documents');
-    }
-  });
-});
+app.post('/documents.:format?', loadUser, docRoute.createDoc);
 
 // Read document
-app.get('/documents/:id.:format?', function(req, res) {
-  Document.findById(req.params.id, function(err, d) {
-    switch (req.params.format) {
-      case 'json':
-        res.send(d);
-      break;
-
-      default:
-        res.render('documents/show.jade', { d: d });
-    }
-  });
-});
+app.get('/documents/:id.:format?', loadUser, docRoute.readDoc);
 
 // Update document
-app.put('/documents/:id.:format?', function(req, res) {
-  Document.findById(req.body.document.id, function(err, d) {
-    d.title = req.body.document.title;
-    d.data = req.body.document.data;
-    d.save(function() {
-      switch (req.query.format) {
-        case 'json':
-          res.send(d);
-         break;
-
-         default:
-          res.redirect('/documents');
-      }
-    });
-  });
-});
+app.put('/documents/:id.:format?', loadUser, docRoute.updateDoc);
 
 // Delete document
-app.del('/documents/:id.:format?', function(req, res) {
-  Document.findById(req.params.id, function(err, d) {
-    d.remove(function() {
-      switch (req.params.format) {
-        case 'json':
-          res.send('true');
-         break;
+app.del('/documents/:id.:format?', loadUser, docRoute.delDoc);
 
-         default:
-          res.redirect('/documents');
-      } 
-    });
-  });
-});
+// USERS //
+//New user
+app.get('/users/new', userRoute.newUser);
+
+//Create user
+app.post('/users.:format?', userRoute.createUser);
+
+// SESSIONS //
+//New session
+app.get('/sessions/new', sessionRoute.newSes);
+
+//Create session
+app.post('/sessions', sessionRoute.createSes);
+
+//Delete session
+app.del('/sessions', loadUser, sessionRoute.delSes);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
