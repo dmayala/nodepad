@@ -10,7 +10,7 @@ exports.createUser = function(req, res) {
   function userSaved() {
     switch (req.params.format) {
       case 'json':
-        res.send(user.__doc);
+        res.send(user);
       break;
 
       default:

@@ -10,19 +10,19 @@ exports.listDoc = function(req, res) {
         break;
 
       default:
-        res.render('documents/index.jade', { documents: documents });
+        res.render('documents/index.jade', { documents: documents, currentUser: req.currentUser });
     }
   });
 };
 
 exports.editDoc = function(req, res) {
   Document.findById(req.params.id, function(err, d) {
-    res.render('documents/edit.jade', { d: d });
+    res.render('documents/edit.jade', { d: d, currentUser: req.currentUser });
   });
 };
 
 exports.newDoc = function(req, res) {
-  res.render('documents/new.jade', { d: new Document() });
+  res.render('documents/new.jade', { d: new Document(), currentUser: req.currentUser });
 };
 
 exports.createDoc = function(req, res) {
@@ -47,15 +47,14 @@ exports.readDoc = function(req, res) {
       break;
 
       default:
-        res.render('documents/show.jade', { d: d });
+        res.render('documents/show.jade', { d: d, currentUser: req.currentUser });
     }
   });
 };
 
 exports.updateDoc = function(req, res) {
-  Document.findById(req.body.document.id, function(err, d) {
-    d.title = req.body.document.title;
-    d.data = req.body.document.data;
+  Document.findById(req.body.d.id, function(err, d) {
+    d.data = req.body.d.data;
     d.save(function() {
       switch (req.query.format) {
         case 'json':
