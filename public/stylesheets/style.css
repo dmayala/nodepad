@@ -179,3 +179,12 @@ ul.toolbar a {
 #document-list li a.editing {
   display: none; /* Shows input text box when .editing*/
 }
+.page {
+  padding: 10px;
+}
+.page h2 {
+  margin-bottom: 10px;
+}
+.page p {
+  margin: 10px 0;
+}

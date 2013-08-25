@@ -17,6 +17,7 @@ exports.listDoc = function(req, res) {
 
 exports.editDoc = function(req, res) {
   Document.findById(req.params.id, function(err, d) {
+    if (!d) { return next(new Error('Document not found')); } 
     res.render('documents/edit.jade', { d: d, currentUser: req.currentUser });
   });
 };
@@ -39,8 +40,9 @@ exports.createDoc = function(req, res) {
   });
 };
 
-exports.readDoc = function(req, res) {
+exports.readDoc = function(req, res, next) {
   Document.findById(req.params.id, function(err, d) {
+    if (!d) { return next(new Error('Document not found')); } 
     switch (req.params.format) {
       case 'json':
         res.send(d);
@@ -54,6 +56,7 @@ exports.readDoc = function(req, res) {
 
 exports.updateDoc = function(req, res) {
   Document.findById(req.body.d.id, function(err, d) {
+    if (!d) { return next(new Error('Document not found')); } 
     d.data = req.body.d.data;
     d.save(function() {
       switch (req.query.format) {
@@ -70,6 +73,7 @@ exports.updateDoc = function(req, res) {
 
 exports.delDoc = function(req, res) {
   Document.findById(req.params.id, function(err, d) {
+    if (!d) { return next(new Error('Document not found')); } 
     d.remove(function() {
       switch (req.params.format) {
         case 'json':

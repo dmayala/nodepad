@@ -1,6 +1,7 @@
 var express = require('express');
 var http = require('http');
 var path = require('path');
+var sys = require('sys');
 var app = module.exports = express();
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongostore')(express);
@@ -35,9 +36,21 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Handle 404
+app.use(function(req, res) {
+  res.status(404);
+  res.render('404.jade');
+});
+
+// Handle 500
+app.use(function(error, req, res, next) {
+  res.status(500);
+  res.render('500.jade', {error: error});
+});
+
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+  //do nothing for now
 }
 
 app.get('/', loadUser, function (req, res) {
