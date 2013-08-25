@@ -15,7 +15,7 @@ exports.listDoc = function(req, res) {
   });
 };
 
-exports.editDoc = function(req, res) {
+exports.editDoc = function(req, res, next) {
   Document.findById(req.params.id, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     res.render('documents/edit.jade', { d: d, currentUser: req.currentUser });
@@ -54,7 +54,7 @@ exports.readDoc = function(req, res, next) {
   });
 };
 
-exports.updateDoc = function(req, res) {
+exports.updateDoc = function(req, res, next) {
   Document.findById(req.body.d.id, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     d.data = req.body.d.data;
@@ -71,7 +71,7 @@ exports.updateDoc = function(req, res) {
   });
 };
 
-exports.delDoc = function(req, res) {
+exports.delDoc = function(req, res, next) {
   Document.findById(req.params.id, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     d.remove(function() {
