@@ -35,6 +35,7 @@ exports.createDoc = function(req, res) {
        break;
 
        default:
+        req.flash('info', 'Document created');
         res.redirect('/documents');
     }
   });
@@ -65,6 +66,7 @@ exports.updateDoc = function(req, res, next) {
          break;
 
          default:
+          req.flash('info', 'Document updated');
           res.redirect('/documents');
       }
     });
@@ -78,9 +80,10 @@ exports.delDoc = function(req, res, next) {
       switch (req.params.format) {
         case 'json':
           res.send('true');
-         break;
+          break;
 
          default:
+          req.flash('info', 'Document deleted');
           res.redirect('/documents');
       } 
     });

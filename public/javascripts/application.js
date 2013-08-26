@@ -86,15 +86,6 @@
     e.preventDefault();
   });
 
-  $('#document-list li a').live('dblclick', function(e) {
-    $(this).addClass('editing');
-    var input = $(this).parent().find('input');
-    input.addClass('editing').focus().blur(function() {
-      $('.editing').removeClass('editing');
-    });
-    e.preventDefault();
-  });
-
   if ($('#document-list .selected').length == 0) {
     $('#document-list li a').first().click();
   }
@@ -117,6 +108,14 @@
       }
     });
   });
+
+  function hideFlashMessages() {
+    $(this).fadeOut();
+  }
+  
+  $('.flash').click(hideFlashMessages);
+
+
 
   $(window).resize(resize);
   $(window).focus(resize);

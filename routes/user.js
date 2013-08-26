@@ -8,6 +8,7 @@ exports.createUser = function(req, res) {
   var user = new User(req.body.user);
 
   function userSaved() {
+    req.flash('info', 'Your account has been created');
     switch (req.params.format) {
       case 'json':
         res.send(user);
@@ -20,7 +21,7 @@ exports.createUser = function(req, res) {
   }
 
   function userSaveFailed() {
-    // TODO: Show error messages
+    req.flash('error', 'Account creation failed');
     res.render('users/new.jade', { user: user });
   }
 

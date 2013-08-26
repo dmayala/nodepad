@@ -13,9 +13,10 @@ html
           ul
             li
               h1
-                a(href='/') Nodepad
+                a(href='/') #{myVar.nameAndVersion('Nodepad', '0.0.1')}
             - if (typeof currentUser !== 'undefined')
               li.right
                 a.destroy(href='/sessions') Log Out
+          !{myVar.flashMessages()}        
         block content
   script(type='text/javascript', src='/javascripts/application.js')
