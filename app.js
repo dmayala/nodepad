@@ -19,39 +19,6 @@ var loadUser = require('./middleware/user').loadUser;
 //Connect to database
 var db = mongoose.connect('mongodb://localhost/nodepad-development');
 
-function FlashMessage(type, messages) {
-  this.type = type;
-  this.messages = typeof messages === 'string' ? [messages] : messages;
-}
-
-FlashMessage.prototype = {
-  get icon() {
-    switch (this.type) {
-      case 'info':
-        return 'ui-icon-info';
-      case 'error':
-        return 'ui-icon-alert';
-    }
-  },
-
-  get stateClass() {
-    switch (this.type) {
-      case 'info':
-        return 'ui-state-highlight';
-      case 'error':
-        return 'ui-state-error';
-    }
-  },
-
-  toHTML: function() {
-    return '<div class="ui-widget flash">' +
-           '<div class="' + this.stateClass + ' ui-corner-all">' +
-           '<p><span class="ui-icon ' + this.icon + '"></span>' + this.messages.join(', ') + '</p>' +
-           '</div>' +
-           '</div>';
-  }
-};
-
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
@@ -63,31 +30,12 @@ app.use(express.cookieParser());
 app.use(express.session({
     key: 'nodepad',
     secret: 'my secret',
-    cookie: {expires: false},
     store: new MongoStore({db: 'nodepad-development'})
   }));
 app.use(express.methodOverride());
 app.use(flash());
 app.use(function(req, res, next){
-    res.locals.myVar = {
-    appName: 'Nodepad',
-    version: '0.1',
-
-      nameAndVersion: function(name, version) {
-        return name + ' v' + version;
-      },
-
-      flashMessages: function () {
-        var html = '';
-        ['error', 'info'].forEach(function (type) {
-          var messages = req.flash(type);
-          if (messages.length > 0) {
-            html += new FlashMessage(type, messages).toHTML();
-          }
-        });
-        return html;
-      }
-    }
+    res.locals.myVar = require('./helpers').helpers(req, res);
     next();
   });
 app.use(app.router);

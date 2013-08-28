@@ -1,7 +1,6 @@
 extends ../layout
 
 block content
-
   .page
     h2 Log In
     p
@@ -13,5 +12,8 @@ block content
       div
         label Password:
         input(name='user[password]', value=user.password || '', type='password')
+      div
+        label(for='remember_me') Remember me:
+        input#remember_me(type='checkbox', name='remember_me')
       div
         input(type='submit', value='Log In')
