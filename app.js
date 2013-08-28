@@ -7,7 +7,6 @@ var flash = require('connect-flash');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongostore')(express);
 
-
 //Routes
 var docRoute = require('./routes/document');
 var userRoute = require('./routes/user');

@@ -1,4 +1,5 @@
 var Document = require('../models').Document();
+var markdown = require('markdown').markdown;
 
 exports.listDoc = function(req, res) {
   Document.find(function(err, documents) {
@@ -47,6 +48,10 @@ exports.readDoc = function(req, res, next) {
     switch (req.params.format) {
       case 'json':
         res.send(d);
+      break;
+
+      case 'html':
+        res.send(markdown.toHTML(d.data));
       break;
 
       default:

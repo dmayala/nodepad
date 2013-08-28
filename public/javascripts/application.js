@@ -14,20 +14,15 @@
     $.post(url, data, success, 'json');
   };
 
-   $.del = function(url, data, success) {
-    data._method = 'DELETE';
-    $.post(url, data, success, 'json');
-  };
-
-  $('.destroy').live('click', function(e) {
+  $('#delete-document').click(function(e) {
     e.preventDefault();
-    if (confirm('Are you sure?')) {
+    if (confirm('Are you sure you want to delete that document?')) {
       var element = $(this),
           form = $('<form></form>');
       form
         .attr({
           method: 'POST',
-          action: element.attr('href')
+          action: '/documents/' + $('#document-list .selected').itemID()
         })
         .hide()
         .append('<input type="hidden" />')
@@ -64,7 +59,7 @@
     divider.css({ height: height + 'px' });
 
     ed.css({
-      width: content.width() - 5 + 'px',
+      width: content.width() - 22 + 'px',
       height: content.height() - 5 + 'px'
     }).focus();
 
@@ -80,7 +75,7 @@
       $('#document-list .selected').removeClass('selected');
       li.addClass('selected');
       $('#editor').val(data.data);
-
+      $('#editor').focus();
     });
 
     e.preventDefault();
@@ -92,30 +87,36 @@
 
   $('#save-button').click(function() {
     var id = $('#document-list .selected').itemID(),
-      params = { d: { data: $('#editor').val(), id: id } };
+        params = { d: { data: $('#editor').val(), id: id } };
     $.put('/documents/' + id + '.json', params, function(data) {
       // Saved, will return JSON
     });
   });
 
-  $('#delete-document').click(function() {
-    var id = $('#document-list .selected').itemID(),
-        params = { id: id };
-    $.del('/documents/' + id + '.json', params, function(data) {
-      if (data){
-        $('#document-list .selected').parent().remove();
-        $('#editor').val('');
-      }
-    });
+  $('#html-button').click(function() {
+    var container = $('#html-container');
+    if (container.is(':visible')) {
+      container.html('').hide();
+      $('#html-button').removeClass('active');
+    } else {
+      $('#save-button').click();
+      $('#html-button').addClass('active');
+      var id = $('#document-list .selected').itemID();
+      $.get('/documents/' + id + '.html', function(data) {
+        // Saved, will return JSON
+        container.html(data).show();
+      });
+    }
   });
 
   function hideFlashMessages() {
     $(this).fadeOut();
   }
-  
+
+  setTimeout(function() {
+    $('.flash').each(hideFlashMessages);
+  }, 5000);
   $('.flash').click(hideFlashMessages);
-
-
 
   $(window).resize(resize);
   $(window).focus(resize);
