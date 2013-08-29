@@ -3,6 +3,7 @@ var http = require('http');
 var path = require('path');
 var sys = require('sys');
 var app = module.exports = express();
+var stylus = require('stylus');
 var flash = require('connect-flash');
 var mongoose = require('mongoose');
 var MongoStore = require('connect-mongostore')(express);
@@ -14,7 +15,6 @@ var sessionRoute = require('./routes/session');
 
 //Middlewares
 var loadUser = require('./middleware/user').loadUser;
-
 //Connect to database
 var db = mongoose.connect('mongodb://localhost/nodepad-development');
 
@@ -38,6 +38,7 @@ app.use(function(req, res, next){
     next();
   });
 app.use(app.router);
+app.use(stylus.middleware({ src: __dirname + '/public' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Handle 404

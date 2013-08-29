@@ -16,7 +16,7 @@ html
                 a(href='/') #{myVar.nameAndVersion('Nodepad', '0.0.1')}
             - if (typeof currentUser !== 'undefined')
               li.right
-                a.destroy(href='/sessions') Log Out
+                a#logout(href='/sessions') Log Out
           !{myVar.flashMessages()}        
         block content
   script(type='text/javascript', src='/javascripts/application.js')

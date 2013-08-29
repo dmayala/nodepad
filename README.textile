@@ -2,8 +2,8 @@ h3. Nodepad
 
 A notepad app written with Node
 
-This commit is part 10 of the tutorial shown here:
-http://dailyjs.com/2011/01/24/node-tutorial-10/
+This commit covers up to part 14 of the tutorial shown here:
+http://dailyjs.com/2011/02/21/node-tutorial-14/
 
 Changes were made to allow it to work with newer versions of the modules shown in the tutorial, since they have changed from the time the tutorial was written. 
 

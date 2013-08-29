@@ -5,7 +5,7 @@ block content
     h2 Log In
     p
       a.button(href='/users/new') Register 
-    form(method='post', action='/sessions')
+    form#login(method='post', action='/sessions')
       div
         label Email:
         input(name='user[email]', value=user.email || '')

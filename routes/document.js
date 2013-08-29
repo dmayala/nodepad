@@ -2,7 +2,7 @@ var Document = require('../models').Document();
 var markdown = require('markdown').markdown;
 
 exports.listDoc = function(req, res) {
-  Document.find(function(err, documents) {
+  Document.find({user_id: req.currentUser.id}, function(err, documents) {
     switch (req.params.format) {
       case 'json':
         res.send(documents.map(function(d) {
@@ -17,7 +17,7 @@ exports.listDoc = function(req, res) {
 };
 
 exports.editDoc = function(req, res, next) {
-  Document.findById(req.params.id, function(err, d) {
+  Document.findOne({ _id: req.params.id, user_id: req.currentUser.id }, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     res.render('documents/edit.jade', { d: d, currentUser: req.currentUser });
   });
@@ -29,6 +29,7 @@ exports.newDoc = function(req, res) {
 
 exports.createDoc = function(req, res) {
   var d = new Document(req.body.document);
+  d.user_id = req.currentUser.id;
   d.save(function() {
     switch (req.query.format) {
       case 'json':
@@ -43,7 +44,7 @@ exports.createDoc = function(req, res) {
 };
 
 exports.readDoc = function(req, res, next) {
-  Document.findById(req.params.id, function(err, d) {
+  Document.findOne({ _id: req.params.id, user_id: req.currentUser.id }, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     switch (req.params.format) {
       case 'json':
@@ -61,7 +62,7 @@ exports.readDoc = function(req, res, next) {
 };
 
 exports.updateDoc = function(req, res, next) {
-  Document.findById(req.body.d.id, function(err, d) {
+  Document.findOne({ _id: req.params.id, user_id: req.currentUser.id }, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     d.data = req.body.d.data;
     d.save(function() {
@@ -79,7 +80,7 @@ exports.updateDoc = function(req, res, next) {
 };
 
 exports.delDoc = function(req, res, next) {
-  Document.findById(req.params.id, function(err, d) {
+  Document.findOne({ _id: req.params.id, user_id: req.currentUser.id }, function(err, d) {
     if (!d) { return next(new Error('Document not found')); } 
     d.remove(function() {
       switch (req.params.format) {
