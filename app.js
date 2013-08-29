@@ -66,6 +66,9 @@ app.get('/', loadUser, function (req, res) {
 // List Documents
 app.get('/documents.:format?', loadUser, docRoute.listDoc);
 
+// Get Document Titles
+app.get('/documents/titles.json', loadUser, docRoute.listTitle);
+
 // Edit Document
 app.get('/documents/:id.:format?/edit', loadUser, docRoute.editDoc);
 
@@ -100,6 +103,9 @@ app.post('/sessions', sessionRoute.createSes);
 
 //Delete session
 app.del('/sessions', loadUser, sessionRoute.delSes);
+
+//Search
+app.post('/search.:format?', loadUser, docRoute.search)
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

@@ -5,7 +5,7 @@ block content
   .page
     h2 Register
 
-    form(method='post', action='/users')
+    form.users(method='post', action='/users')
       div
         label Email:
         input(name='user[email]', value=user.email || '')

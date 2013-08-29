@@ -1,6 +1,15 @@
 var mongoose = require('mongoose');
 var crypto = require('crypto');
 
+function extractKeywords(text) {
+  if (!text) return [];
+
+  return text.
+    split(/\s+/).
+    filter(function(v) { return v.length > 2; }).
+    filter(function(v, i, a) { return a.lastIndexOf(v) === i; });
+}
+
 //Schemas
 var DocumentSchema = new mongoose.Schema({
   'title': { type: String, index: true },
@@ -15,6 +24,11 @@ DocumentSchema.virtual('id')
     return this._id.toHexString();
 });
 
+DocumentSchema.pre('save', function(next) {
+  this.keywords = extractKeywords(this.data);
+  next();
+});
+
 //Models 
 var Document = mongoose.model('Document', DocumentSchema);
 
@@ -24,7 +38,7 @@ function validatePresenceOf(value) {
 }
   
 var UserSchema = new mongoose.Schema({
-  'email': { type: String, index: true },
+  'email': { type: String, validate: [validatePresenceOf, 'an email is required'], index: { unique: true } },
   'hashed_password': String,
   'salt': String
 });
