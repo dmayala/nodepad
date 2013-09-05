@@ -4,11 +4,8 @@ block content
   #left.outline-view
     #DocumentTitles
       ul#document-list
-        - for (var d in documents)
-          li
-            a(id='document-title-' + documents[d].id, href='/documents/' + documents[d].id)
-              =documents[d].title
-
+        li#document-row-template(style='display: none')
+          a(id='document_{{ id }}') {{ title }}
     ul.toolbar
       li
         a#create-document(href='/documents/new')
