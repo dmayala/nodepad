@@ -1,13 +1,13 @@
-h3. Nodepad
+# Nodepad #
 
-A notepad app written with Node
+A notepad app written with Node.
 
 This commit covers up to part 23 of the tutorial shown here:
 http://dailyjs.com/2011/05/02/node-tutorial-23/
 
 Changes were made to allow it to work with newer versions of the modules shown in the tutorial, since they have changed from the time the tutorial was written. 
 
-h3. License (GPL)
+# License (GPL) #
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -20,6 +20,4 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see "http://www.gnu.org/licenses/":http://www.gnu.org/licenses/.
-
-
+along with this program.  If not, see http://www.gnu.org/licenses/.
