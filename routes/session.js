@@ -3,7 +3,7 @@ var User = models.User();
 var LoginToken = models.LoginToken();
 
 exports.newSes =function(req, res) {
-  res.render('sessions/new.jade', { user: new User() });
+  res.render('sessions/new', { user: new User() });
 };
 
 exports.createSes = function(req, res) {

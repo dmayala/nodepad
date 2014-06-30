@@ -42,7 +42,7 @@
       'click a': 'open'
     },
 
-    template: _.template($('#document-row-template').html()),
+    template: _.template('<a id="document_{{ id }}">{{ title }}</a>'),
 
     initialize: function() {
       _.bindAll(this, 'render');
@@ -141,7 +141,7 @@
       'click #html-button': 'showHTML'
     },
 
-    initialize: function(model) {
+    initialize: function() {
       _.bindAll(this, 'save', 'showHTML');
     },
 
@@ -208,7 +208,6 @@
     remove: function(e) {
       e.preventDefault();
       var model = appView.documentList.selectedDocument;
-      console.log(model.toJSON());
 
       if (!model) return;
       if (confirm('Are you sure you want to delete that document?')) {

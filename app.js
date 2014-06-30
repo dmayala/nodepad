@@ -18,10 +18,13 @@ var loadUser = require('./middleware/user').loadUser;
 //Connect to database
 var db = mongoose.connect('mongodb://localhost/nodepad-development');
 
+var hbs = require('hbs');
+
 // all environments
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.set('view engine', 'html');
+app.engine('html', hbs.__express);
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -33,6 +36,12 @@ app.use(express.session({
   }));
 app.use(express.methodOverride());
 app.use(flash());
+hbs.registerHelper('meh', function(name, version) {
+  return name + ' v' + version;
+});
+hbs.registerHelper('json', function(context) {
+    return JSON.stringify(context);
+});
 app.use(function(req, res, next){
     res.locals.myVar = require('./helpers').helpers(req, res);
     next();
@@ -44,13 +53,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Handle 404
 app.use(function(req, res) {
   res.status(404);
-  res.render('404.jade');
+  res.render('404', {layout: false});
 });
 
 // Handle 500
 app.use(function(error, req, res, next) {
   res.status(500);
-  res.render('500.jade', {error: error});
+  res.render('500', {layout: false, error: error});
 });
 
 // development only
@@ -64,6 +73,10 @@ app.get('/', loadUser, function (req, res) {
 
 // DOCUMENTS //
 // List Documents
+app.get('/test', loadUser, function (req, res) {
+  res.render('index', { currentUser: req.currentUser });
+});
+
 app.get('/documents.:format?', loadUser, docRoute.listDoc);
 
 // Get Document Titles

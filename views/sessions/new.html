@@ -1,0 +1,21 @@
+<div class="page">
+  <h2>Log In</h2>
+  <p><a class="button" href="/users/new">Create an account &rarr;</a></p>
+  <form class="users" id="login" method="post" action="/sessions">
+    <div>
+      <label>Email:</label>
+      <input name="user[email]" value="{{user.email}}">
+    </div>
+    <div>
+      <label>Password:</label>
+      <input name="user[password]" type="password" value="{{user.password}}">
+    </div>
+    <div>
+      <label for="remember_me">Remember me:</label>
+      <input id="remember_me" type="checkbox" name="remember_me">
+    </div>
+    <div>
+      <input type="submit" value="Log In">
+    </div>
+  </form>
+</div>

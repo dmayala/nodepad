@@ -2,7 +2,7 @@ var User = require('../models').User();
 var emails = require('../email').emails;
 
 exports.newUser = function(req, res) {
-  res.render('users/new.jade', {user: new User() });
+  res.render('users/new', {user: new User() });
 };
 
 exports.createUser = function(req, res) {
@@ -10,7 +10,7 @@ exports.createUser = function(req, res) {
 
   function userSaveFailed() {
     req.flash('error', 'Account creation failed');
-    res.render('users/new.jade', { user: user });
+    res.render('users/new', { user: user });
   }
 
   user.save(function(err) {

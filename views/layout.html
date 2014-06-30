@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Nodepad</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/aristo/jquery-ui-1.8.5.custom.css">
+    <script type="text/javascript" src="/javascripts/json.js"></script>
+    <script type="text/javascript" src="/javascripts/jquery.min.js"></script>
+    <script type="text/javascript" src="/javascripts/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/javascripts/underscore-min.js"></script>
+    <script type="text/javascript" src="/javascripts/backbone-min.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <ul>
+          <li>
+            <h1>
+              <a href="/">{{#meh "Nodepad" "0.1"}}{{/meh}}</a>
+            </h1>
+            {{#if currentUser}}
+              <li class="right">
+                <a id="logout" href="/sessions">Log Out</a>
+              </li>
+              <li class="right">
+                <form class="search" action="/search">
+                  <input name="s" value="Search" />
+                </form>
+              </li>
+            {{/if}}
+          </li>
+        </ul>        
+      </div>
+      {{#myVar.flashMessages}}
+        {{{this}}}
+      {{/myVar.flashMessages}}
+      {{{ body }}}
+      <script type="text/javascript" src="/javascripts/flash.js"></script>
+      <script type="text/javascript" src="/javascripts/resize.js"></script>
+      <script type="text/javascript" src="/javascripts/documents.js"></script>
+      {{#if documents}}
+        <script>
+          $(function() {
+          if (typeof Documents !== 'undefined') {
+            Documents.reset({{#json documents}}{{/json}});
+          }
+          });
+        </script>
+      {{/if}}
+    </div>
+</html>

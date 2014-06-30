@@ -17,7 +17,7 @@ exports.listDoc = function(req, res) {
         return clone;
       });
 
-      res.render('documents/index.jade', { documents: documents, currentUser: req.currentUser });
+      res.render('documents/index', { documents: documents, currentUser: req.currentUser });
     }
   });
 };
