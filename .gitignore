@@ -1,2 +1,18 @@
-#Node
+# Heroku environmental variables.
+# https://devcenter.heroku.com/articles/config-vars
+.env
+
+# npm packages
 node_modules
+
+# bower packages
+client/js/vendor/
+
+#dist
+client/dist/
+
+# Mac
+.DS_Store
+
+# Emacs
+*~
