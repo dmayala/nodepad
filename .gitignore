@@ -2,6 +2,9 @@
 # https://devcenter.heroku.com/articles/config-vars
 .env
 
+# old files
+old/
+
 # npm packages
 node_modules
 

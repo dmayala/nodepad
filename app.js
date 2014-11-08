@@ -1,125 +1,67 @@
 var express = require('express');
-var http = require('http');
 var path = require('path');
-var sys = require('sys');
-var app = module.exports = express();
-var stylus = require('stylus');
-var flash = require('connect-flash');
-var mongoose = require('mongoose');
-var MongoStore = require('connect-mongostore')(express);
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-//Routes
-var docRoute = require('./routes/document');
-var userRoute = require('./routes/user');
-var sessionRoute = require('./routes/session');
+var routes = require('./routes/index');
+var users = require('./routes/users');
 
-//Middlewares
-var loadUser = require('./middleware/user').loadUser;
-//Connect to database
-var db = mongoose.connect('mongodb://localhost/nodepad-development');
+var app = express();
 
-var hbs = require('hbs');
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
 
-// all environments
-app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/views');
-app.set('view engine', 'html');
-app.engine('html', hbs.__express);
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.cookieParser());
-app.use(express.session({
-    key: 'nodepad',
-    secret: 'my secret',
-    store: new MongoStore({db: 'nodepad-development'})
-  }));
-app.use(express.methodOverride());
-app.use(flash());
-hbs.registerHelper('meh', function(name, version) {
-  return name + ' v' + version;
-});
-hbs.registerHelper('json', function(context) {
-    return JSON.stringify(context);
-});
-app.use(function(req, res, next){
-    res.locals.myVar = require('./helpers').helpers(req, res);
-    next();
-  });
-app.use(app.router);
-app.use(stylus.middleware({ src: __dirname + '/public' }));
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Handle 404
-app.use(function(req, res) {
-  res.status(404);
-  res.render('404', {layout: false});
+app.use('/', routes);
+app.use('/users', users);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
 });
 
-// Handle 500
-app.use(function(error, req, res, next) {
-  res.status(500);
-  res.render('500', {layout: false, error: error});
-});
+// error handlers
 
-// development only
-if ('development' == app.get('env')) {
-  //do nothing for now
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
 }
 
-app.get('/', loadUser, function (req, res) {
-  res.redirect('/documents');
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
-// DOCUMENTS //
-// List Documents
-app.get('/test', loadUser, function (req, res) {
-  res.render('index', { currentUser: req.currentUser });
+var debug = require('debug')('nodepad');
+app.set('port', process.env.PORT || 3000);
+
+var server = app.listen(app.get('port'), function() {
+  debug('Express server listening on port ' + server.address().port);
 });
 
-app.get('/documents.:format?', loadUser, docRoute.listDoc);
 
-// Get Document Titles
-app.get('/documents/titles.json', loadUser, docRoute.listTitle);
-
-// Edit Document
-app.get('/documents/:id.:format?/edit', loadUser, docRoute.editDoc);
-
-// New Document
-app.get('/documents/new', loadUser, docRoute.newDoc);
-
-// Create document 
-app.post('/documents.:format?', loadUser, docRoute.createDoc);
-
-// Read document
-app.get('/documents/:id.:format?', loadUser, docRoute.readDoc);
-
-// Update document
-app.put('/documents/:id.:format?', loadUser, docRoute.updateDoc);
-
-// Delete document
-app.del('/documents/:id.:format?', loadUser, docRoute.delDoc);
-
-// USERS //
-//New user
-app.get('/users/new', userRoute.newUser);
-
-//Create user
-app.post('/users.:format?', userRoute.createUser);
-
-// SESSIONS //
-//New session
-app.get('/sessions/new', sessionRoute.newSes);
-
-//Create session
-app.post('/sessions', sessionRoute.createSes);
-
-//Delete session
-app.del('/sessions', loadUser, sessionRoute.delSes);
-
-//Search
-app.post('/search.:format?', loadUser, docRoute.search)
-
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
-});
+module.exports = app;
